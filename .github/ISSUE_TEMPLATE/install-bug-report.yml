@@ -1,7 +1,8 @@
 name: 🐛 Install Bug Report
 description: Report an Egg install issue
 title: "[Install Bug]: <Egg Name>"
-labels: ["install bug", "not confirmed"]
+type: "Bug"
+labels: ["Not Confirmed"]
 body:
   - type: markdown
     attributes:
