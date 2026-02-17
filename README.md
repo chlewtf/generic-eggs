@@ -45,7 +45,7 @@ A generic Node.JS egg
 [bun](https://bun.sh)
 A generic Bun egg
 
-## [Pun](pun)
+### [Pun](pun)
 
 [pun](https://pun-three.vercel.app)
 A generic Pun egg
