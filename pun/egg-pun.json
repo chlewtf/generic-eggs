@@ -1,0 +1,105 @@
+{
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+    "meta": {
+        "version": "PTDL_v2",
+        "update_url": null
+    },
+    "exported_at": "2026-02-11T12:30:00+00:00",
+    "name": "Pun",
+    "author": "admin@chle.wtf",
+    "description": "Pun - A blazingly fast all-in-one JavaScript runtime, package manager, bundler, and test runner written in Rust. Run JavaScript applications with hot reload, package management, and built-in testing.",
+    "features": [
+        "eula",
+        "pid_limit"
+    ],
+    "docker_images": {
+        "ghcr.io/red-creators/pun": "ghcr.io/red-creators/pun:latest"
+    },
+    "file_denylist": [],
+    "startup": "pun run {{STARTUP_FILE}} {{STARTUP_FLAGS}}",
+    "config": {
+        "files": "{\n    \"package.json\": {\n        \"parser\": \"json\",\n        \"find\": {\n            \"scripts.start\": \"pun run {{STARTUP_FILE}}\"\n        }\n    }\n}",
+        "startup": "{\n    \"done\": \"Server running\"\n}",
+        "logs": "{}",
+        "stop": "^C"
+    },
+    "scripts": {
+        "installation": {
+            "script": "#!/bin/bash\n# Pun Installation Script for Pterodactyl\nset -e\n\ncd /mnt/server\n\necho \"=================================\"\necho \"Pun JavaScript Runtime Installer\"\necho \"=================================\"\necho \"\"\n\n# Check if Pun is available\nif ! command -v pun &> /dev/null; then\n    echo \"ERROR: Pun is not installed in the container!\"\n    echo \"Please ensure the Docker image ghcr.io/red-creators/pun is being used.\"\n    exit 1\nfi\n\necho \"Pun version: $(pun --version || echo 'unknown')\"\necho \"\"\n\n# Clone from GitHub if GIT_REPO is provided\nif [ -n \"${GIT_REPO}\" ]; then\n    echo \"Cloning repository from ${GIT_REPO}...\"\n    if [ -n \"${GIT_BRANCH}\" ]; then\n        git clone --single-branch --branch ${GIT_BRANCH} ${GIT_REPO} .\n    else\n        git clone ${GIT_REPO} .\n    fi\n    echo \"Repository cloned successfully.\"\n    echo \"\"\nfi\n\n# Initialize project if no package.json exists\nif [ ! -f package.json ]; then\n    echo \"No package.json found. Initializing new Pun project...\"\n    pun init\n    echo \"Project initialized.\"\n    echo \"\"\nfi\n\n# Install dependencies if package.json exists and AUTO_INSTALL is enabled\nif [ -f package.json ] && [ \"${AUTO_INSTALL}\" == \"1\" ]; then\n    echo \"Installing dependencies from package.json...\"\n    pun install\n    echo \"Dependencies installed.\"\n    echo \"\"\nfi\n\n# Create default index.js if STARTUP_FILE doesn't exist\nif [ ! -f \"${STARTUP_FILE}\" ]; then\n    echo \"Creating default ${STARTUP_FILE}...\"\n    cat > \"${STARTUP_FILE}\" << 'EOF'\n// Pun Server Example\nconst port = process.env.PORT || process.env.SERVER_PORT || 3000;\n\nconsole.log('Starting Pun server...');\n\nPun.serve({\n  port: port,\n  fetch(req) {\n    const url = new URL(req.url);\n    \n    if (url.pathname === '/') {\n      return new Response('Hello from Pun on Pterodactyl!', {\n        headers: { 'Content-Type': 'text/plain' }\n      });\n    }\n    \n    if (url.pathname === '/health') {\n      return new Response(JSON.stringify({ status: 'healthy' }), {\n        headers: { 'Content-Type': 'application/json' }\n      });\n    }\n    \n    return new Response('Not Found', { status: 404 });\n  }\n});\n\nconsole.log(`Server running at http://0.0.0.0:${port}`);\nEOF\n    echo \"Default server file created.\"\n    echo \"\"\nfi\n\necho \"=================================\"\necho \"Installation complete!\"\necho \"=================================\"\necho \"\"\necho \"Your Pun server is ready to start.\"\necho \"Main file: ${STARTUP_FILE}\"\necho \"Port: ${SERVER_PORT}\"",
+            "container": "ghcr.io/red-creators/pun:latest",
+            "entrypoint": "bash"
+        }
+    },
+    "variables": [
+        {
+            "name": "Startup File",
+            "description": "The main JavaScript file to execute when starting the server.",
+            "env_variable": "STARTUP_FILE",
+            "default_value": "index.js",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:128",
+            "field_type": "text"
+        },
+        {
+            "name": "Startup Flags",
+            "description": "Additional flags to pass to Pun on startup. Options: --watch (auto-restart), --hot (hot reload)",
+            "env_variable": "STARTUP_FLAGS",
+            "default_value": "--hot",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:256",
+            "field_type": "text"
+        },
+        {
+            "name": "Auto Install Dependencies",
+            "description": "Automatically run 'pun install' on server start if package.json exists.",
+            "env_variable": "AUTO_INSTALL",
+            "default_value": "1",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "Node Environment",
+            "description": "The NODE_ENV environment variable value.",
+            "env_variable": "NODE_ENV",
+            "default_value": "production",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|in:development,production",
+            "field_type": "text"
+        },
+        {
+            "name": "Server Port",
+            "description": "The port your application listens on (exposed via process.env.PORT and process.env.SERVER_PORT).",
+            "env_variable": "SERVER_PORT",
+            "default_value": "3000",
+            "user_viewable": true,
+            "user_editable": false,
+            "rules": "required|integer|between:1024,65535",
+            "field_type": "text"
+        },
+        {
+            "name": "Git Repository",
+            "description": "Optional: Git repository URL to clone on installation. Leave empty to start from scratch.",
+            "env_variable": "GIT_REPO",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string",
+            "field_type": "text"
+        },
+        {
+            "name": "Git Branch",
+            "description": "Git branch to clone (only used if Git Repository is set).",
+            "env_variable": "GIT_BRANCH",
+            "default_value": "main",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string",
+            "field_type": "text"
+        }
+    ]
+}
