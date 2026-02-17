@@ -45,11 +45,6 @@ A generic Node.JS egg
 [bun](https://bun.sh)
 A generic Bun egg
 
-### [Pun](pun)
-
-[pun](https://pun-three.vercel.app)
-A generic Pun egg
-
 ### [nodemon](nodemon)
 
 [nodemon](https://nodemon.io/)
@@ -59,6 +54,12 @@ A nodemon JavaScript and TypeScript language egg for running and automatically r
 
 [python](https://www.python.org/)
 A generic Python language egg
+
+### [Pun](pun)
+
+[pun](https://pun-three.vercel.app)
+A generic Pun egg
+
 
 ### [Rust](rust)
 
