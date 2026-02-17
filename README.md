@@ -50,16 +50,15 @@ A generic Bun egg
 [nodemon](https://nodemon.io/)
 A nodemon JavaScript and TypeScript language egg for running and automatically restarting the node application when file changes in the directory are detected
 
-### [Python](python)
-
-[python](https://www.python.org/)
-A generic Python language egg
-
 ### [Pun](pun)
 
 [pun](https://pun-three.vercel.app)
 A generic Pun egg
 
+### [Python](python)
+
+[python](https://www.python.org/)
+A generic Python language egg
 
 ### [Rust](rust)
 
